@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Endereço</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #cep {
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Preenchimento Automático do Endereço</h2>
+
+<form id="form-endereco">
+    <label for="cep">CEP:</label>
+    <input type="text" id="cep" name="cep" maxlength="10" placeholder="Ex: 01001-000" onblur="consultarCEP()">
+    
+    <label for="logradouro">Rua :</label>
+    <input type ="text" id="logradouro" name="logradouro" readonly>
+    
+    <label for="complemento">Complemento:</label>
+    <input type="text" id="complemento" name="complemento" readonly>
+    
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" name="bairro" readonly>
+    
+    <label for="localidade">Cidade:</label>
+    <input type="text" id="localidade" name="localidade" readonly>
+    
+    <label for="uf">Estado:</label>
+    <input type="text" id="uf" name="uf" readonly>
+</form>
+
+<script>
+    function consultarCEP() {
+        const cep = document.getElementById('cep').value.replace(/\D/g, ''); 
+        if (cep.length === 8) { 
+            const url = `https://viacep.com.br/ws/${cep}/json/`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        alert('CEP não encontrado!');
+                    } else {
+                     
+                        document.getElementById('logradouro').value = data.logradouro;
+                        document.getElementById('complemento').value = data.complemento;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('localidade').value = data.localidade;
+                        document.getElementById('uf').value = data.uf;
+                    }
+                })
+                .catch(error => {
+                    alert('Erro ao consultar o CEP!');
+                    console.error(error);
+                });
+        } else {
+            alert('CEP inválido!');
+        }
+    }
+</script>
+
+</body>
+</html>
